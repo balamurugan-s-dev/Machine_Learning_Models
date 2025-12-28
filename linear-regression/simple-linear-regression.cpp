@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <iomanip>
 using namespace std;
 
 int main(){
@@ -21,7 +22,6 @@ int main(){
         {41, 649}, {42, 668}, {43, 683}, {44, 698}, {45, 715},
         {46, 731}, {47, 745}, {48, 758}, {49, 774}, {50, 790}
     };
-
 
     long train = 50000;
     long long perf = 0;
@@ -47,17 +47,25 @@ int main(){
         m = m + lr * dm;
         c = c + lr * dc;
     }
-
-    ofstream filet("simple-linear-regression.txt");
-    filet << m << " " << c;
-    filet.close();
-
+    
     ofstream file("simple-linear-regression.bin", ios::binary);
     file.write((char*)&m, sizeof(m));
     file.write((char*)&c, sizeof(c));
     file.close();
 
-    cout << "Final : " << m << endl;
-    cout << "Final : " << c << endl;
+    ofstream csvfile("simple-linear-regression.csv");
+    csvfile << "x,y,prediction\n";
+
+    for(auto &row : data){
+        double x = row[0];
+        double y = row[1];
+        double y_pred = m*x + c;
+
+        csvfile << x << "," << y << "," << y_pred << "\n";
+    }
+    csvfile.close();
+
+    cout << "Final : " << fixed << setprecision(15) << m << endl;
+    cout << "Final : " << fixed << setprecision(15) << c << endl;
     cout << "Performance : " << perf << endl;
 }
